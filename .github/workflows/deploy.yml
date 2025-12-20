@@ -1,0 +1,54 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: asia-southeast1
+  SERVICE_NAME: llm-api
+  MODEL_NAME: qwen3-8b-awq
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - run: gcloud auth configure-docker
+
+      - name: Build and push
+        run: |
+          docker build -t gcr.io/${{ env.PROJECT_ID }}/llm-cloud-inference:${{ github.sha }} -f docker/Dockerfile docker/
+          docker push gcr.io/${{ env.PROJECT_ID }}/llm-cloud-inference:${{ github.sha }}
+
+      - name: Deploy
+        run: |
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --image gcr.io/${{ env.PROJECT_ID }}/llm-cloud-inference:${{ github.sha }} \
+            --platform managed \
+            --region ${{ env.REGION }} \
+            --gpu 1 \
+            --gpu-type nvidia-l4 \
+            --cpu 8 \
+            --memory 32Gi \
+            --timeout 3600 \
+            --min-instances 0 \
+            --max-instances 1 \
+            --port 8080 \
+            --cpu-boost \
+            --no-cpu-throttling \
+            --set-env-vars "MODEL_NAME=${{ env.MODEL_NAME }},GCS_BUCKET=${{ env.PROJECT_ID }}-models" \
+            --service-account "llm-inference@${{ env.PROJECT_ID }}.iam.gserviceaccount.com" \
+            --startup-probe="tcpSocket.port=8080,initialDelaySeconds=120,timeoutSeconds=30,periodSeconds=30,failureThreshold=30" \
+            --allow-unauthenticated
