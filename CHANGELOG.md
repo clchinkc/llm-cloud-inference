@@ -153,7 +153,6 @@ Local Machine                    Google Cloud Platform
 
 **Cost Comparison** (inference cost, not including model download):
 - Self-hosted L4: ~$0.005/1K tokens (when running), $0 when idle
-- OpenAI gpt-4o-mini: ~$0.075/1K tokens
 - OpenAI GPT-5 Nano: ~$0.0002-0.0004/1K tokens
 
 ---
