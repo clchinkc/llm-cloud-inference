@@ -1,0 +1,14 @@
+.git
+.gitignore
+.github
+README.md
+docs
+benchmarks
+scripts
+Makefile
+Plan.md
+pyproject.toml
+requirements.txt
+*.md
+.env
+.env.local
