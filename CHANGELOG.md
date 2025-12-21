@@ -151,10 +151,10 @@ Local Machine                    Google Cloud Platform
 | min_instances=0 (Standard) | $0 | ~$648 | Development, light usage |
 | min_instances=1 (Always Warm) | ~$648 | ~$648 | Production with SLA |
 
-**Cost Comparison** (compute cost only, not including model download):
+**Cost Comparison** (inference cost, not including model download):
+- Self-hosted L4: ~$0.005/1K tokens (when running), $0 when idle
 - OpenAI gpt-4o-mini: ~$0.075/1K tokens
-- Self-hosted L4: ~$0.005/1K tokens (when running)
-- Break-even vs gpt-4o-mini: ~13 hours/month GPU usage (scale-to-zero: $0 idle)
+- OpenAI GPT-5 Nano: ~$0.0002-0.0004/1K tokens
 
 ---
 
