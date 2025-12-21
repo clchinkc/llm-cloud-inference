@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
 Simple CLI chatbot for interacting with the self-hosted LLM.
+Demonstrates Google Cloud authentication with OpenAI SDK.
 Usage: python scripts/chat.py
 """
 
@@ -8,12 +9,14 @@ import os
 import subprocess
 import sys
 
+import httpx
 from openai import OpenAI
 
 
 def get_service_url():
     """Automatically retrieve the Cloud Run service URL if not set."""
     try:
+        region = os.getenv("GCP_REGION", "asia-southeast1")
         result = subprocess.run(
             [
                 "gcloud",
@@ -22,7 +25,7 @@ def get_service_url():
                 "describe",
                 "llm-api",
                 "--region",
-                "asia-southeast1",
+                region,
                 "--format",
                 "value(status.url)",
             ],
@@ -35,6 +38,42 @@ def get_service_url():
     except Exception:
         pass
     return None
+
+
+def get_identity_token():
+    """Get Google Cloud identity token for authentication."""
+    try:
+        result = subprocess.run(
+            ["gcloud", "auth", "print-identity-token"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        if result.returncode == 0:
+            return result.stdout.strip()
+    except Exception:
+        pass
+    return None
+
+
+class AuthenticatedOpenAI(OpenAI):
+    """Custom OpenAI client that uses Bearer token authentication."""
+
+    def __init__(self, base_url: str, bearer_token: str, **kwargs):
+        # Create custom httpx client with Bearer token in event hooks
+        def add_bearer_token(request):
+            request.headers["Authorization"] = f"Bearer {bearer_token}"
+
+        # Create httpx client with event hook
+        httpx_client = httpx.Client(event_hooks={"request": [add_bearer_token]})
+
+        # Initialize with custom httpx client
+        super().__init__(
+            base_url=base_url,
+            api_key="dummy",
+            http_client=httpx_client,
+            **kwargs
+        )
 
 
 def main():
@@ -58,7 +97,15 @@ def main():
             print(f"  {cmd}")
             sys.exit(1)
 
-    client = OpenAI(base_url=f"{api_url}/v1", api_key="dummy")
+    # Get identity token for authentication
+    print("Getting authentication token...")
+    token = get_identity_token()
+    if not token:
+        print("Error: Could not get identity token.")
+        print("Make sure you are authenticated: gcloud auth login")
+        sys.exit(1)
+
+    client = AuthenticatedOpenAI(base_url=f"{api_url}/v1", bearer_token=token)
     messages = [{"role": "system", "content": "You are a helpful assistant."}]
 
     print(f"Connected to {api_url}")

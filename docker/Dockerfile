@@ -13,8 +13,8 @@ ENV PYTHONUNBUFFERED=1
 
 RUN mkdir -p /models
 
-COPY download_model.py /download_model.py
-COPY startup.sh /startup.sh
+COPY docker/download_model.py /download_model.py
+COPY docker/startup.sh /startup.sh
 RUN chmod +x /startup.sh
 
 EXPOSE ${PORT}

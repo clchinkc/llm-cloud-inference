@@ -24,7 +24,7 @@ if [ -z "$PROJECT_ID" ]; then
 fi
 
 SERVICE_NAME="llm-api"
-REGION="asia-southeast1"
+REGION="${GCP_REGION:-asia-southeast1}"  # asia-southeast1 supports nvidia-l4 GPU
 
 # Colors for output
 GREEN='\033[0;32m'

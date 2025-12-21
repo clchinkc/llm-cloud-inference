@@ -2,7 +2,7 @@
 set -e
 
 PROJECT_ID="${GCP_PROJECT_ID:?Set GCP_PROJECT_ID}"
-REGION="${GCP_REGION:-asia-southeast1}"
+REGION="${GCP_REGION:-asia-east2}"
 SERVICE_NAME="llm-api"
 IMAGE_NAME="gcr.io/${PROJECT_ID}/llm-cloud-inference:latest"
 MODEL_NAME="${MODEL_NAME:-qwen3-8b-awq}"

@@ -2,8 +2,9 @@
 """Download models from Hugging Face."""
 
 import os
-from huggingface_hub import snapshot_download
 from pathlib import Path
+
+from huggingface_hub import snapshot_download
 
 MODEL_ID = os.getenv("MODEL_ID", "Qwen/Qwen3-8B-AWQ")
 LOCAL_DIR = Path(os.getenv("MODEL_DIR", "./models"))

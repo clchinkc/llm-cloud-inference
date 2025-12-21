@@ -23,7 +23,29 @@ Before you start, verify you have:
 - Docker installed
 - ~50GB free disk space (for model download)
 
-### 5-Step Deployment
+### Cloud Build (Recommended - Automated)
+
+For **automatic deployment on every push to main**:
+
+1. Setup Cloud Build trigger (see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for complete setup)
+2. Push code to main branch
+3. Cloud Build automatically:
+   - Builds Docker image (~15 mins)
+   - Pushes to Artifact Registry (~2 mins)
+   - Deploys to Cloud Run (~10 mins)
+4. Service is live with scale-to-zero (min-instances=0)
+
+**Features:**
+- ✅ **Fully automated** - no manual intervention after setup
+- ✅ **Scale-to-zero** - $0/month when idle
+- ✅ **Fast responses** - ~80ms latency when warm
+- ✅ **Cost efficient** - only pay for GPU when processing requests
+
+**Cost**: $0.06 per build + ~$0.90/hour when running (GPU charges only during active requests)
+
+### Manual Deployment
+
+For one-time or testing deployments:
 
 ```bash
 # 1. Set your GCP project
@@ -37,13 +59,13 @@ make download-model           # ~10 min (8GB download)
 make upload-model             # ~5 min
 
 # 4. Deploy to Cloud Run
-make deploy                   # ~10 min (build + deploy)
+gcloud builds submit --config=cloudbuild.yaml    # ~15-20 min
 
 # 5. Test the API
 make test                     # ~5 min (cold start)
 ```
 
-**Total time: ~35 minutes first deployment**
+**Total time: ~35-40 minutes first deployment**
 
 Endpoint deployed with IAM security enabled by default.
 
@@ -249,9 +271,14 @@ make logs               # View Cloud Run logs
 
 ### Cold Start Too Slow?
 
-Use always-warm deployment:
+For faster responses at higher cost, enable always-warm deployment:
 ```bash
 gcloud run services update llm-api --min-instances 1 --region asia-southeast1
+```
+
+To return to scale-to-zero (default, lower cost):
+```bash
+gcloud run services update llm-api --min-instances 0 --region asia-southeast1
 ```
 
 ### Out of Memory?
@@ -274,7 +301,7 @@ Look for errors in Container startup phase.
 
 Default: All deployments use IAM + Identity Tokens. No API keys, no secret management.
 
-Automatic Setup: GitHub Actions deployment automatically:
+Automatic Setup: Cloud Build deployment automatically:
 - Disables unauthenticated access
 - Creates service account for applications
 - Sets up IAM bindings
@@ -292,20 +319,17 @@ Automatic Setup: GitHub Actions deployment automatically:
 ```
 
 **Authenticate Requests** (Python):
-```python
-import google.auth
-from google.auth.transport.requests import Request
-from openai import OpenAI
 
-credentials, _ = google.auth.default()
-credentials.refresh(Request())
+See [scripts/example_usage.py](scripts/example_usage.py) for the complete working implementation using the `AuthenticatedOpenAI` class.
 
-client = OpenAI(
-    base_url="https://your-url/v1",
-    api_key="dummy",
-    default_headers={"Authorization": f"Bearer {credentials.id_token}"}
-)
+Quick usage:
+```bash
+python scripts/example_usage.py     # Complete example
+python scripts/chat.py              # Interactive chat
+python scripts/quick_test.py        # Test with cold-start handling
 ```
+
+The scripts automatically handle Google Cloud identity token authentication using httpx event hooks.
 
 See [docs/SECURITY.md](docs/SECURITY.md) for:
 - 4 security level options (development, production, enterprise)

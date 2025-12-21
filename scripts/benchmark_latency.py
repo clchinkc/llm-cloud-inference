@@ -21,6 +21,7 @@ from openai import AsyncOpenAI
 def _get_service_url():
     """Automatically retrieve the Cloud Run service URL if not set."""
     try:
+        region = os.getenv("GCP_REGION", "asia-east2")
         result = subprocess.run(
             [
                 "gcloud",
@@ -29,7 +30,7 @@ def _get_service_url():
                 "describe",
                 "llm-api",
                 "--region",
-                "asia-southeast1",
+                region,
                 "--format",
                 "value(status.url)",
             ],
