@@ -175,12 +175,11 @@ See [docs/SECURITY.md](docs/SECURITY.md) for authentication details and [scripts
 
 ### Latency & Throughput (Warm Instance)
 
-| Metric | Self-Hosted | GPT-5 Nano |
-|--------|-------------|-----------|
-| **TTFT** (p50) | ~80ms | ~300ms |
-| **Cost/1K tokens** | ~$0.005 | $0.0002-0.0004 |
-
-GPT-5 Nano: Lower latency cost (~17x less), 300ms TTFT. Self-hosted: Lower latency (~80ms), higher per-token cost.
+| Metric | Self-Hosted |
+|--------|-------------|
+| **TTFT** (p50) | ~80ms |
+| **Cost/1K tokens** | ~$0.005 |
+| **Throughput** | ~43 tokens/sec |
 
 ### Cold Start
 
@@ -202,7 +201,7 @@ See [docs/BENCHMARKS.md](docs/BENCHMARKS.md) for detailed performance analysis.
 | 100 hours/month | $90 | $648 |
 | 1000 hours/month | $900 | $648 |
 
-GPT-5 Nano costs less per token. Self-hosted scales to zero for low-usage scenarios.
+Self-hosted scales to zero, providing cost savings for low-usage and intermittent workloads.
 
 ### GPU Pricing (L4 @ $0.90/hour)
 

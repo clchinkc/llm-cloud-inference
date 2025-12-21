@@ -5,7 +5,7 @@
 **LLM Cloud Inference** is a **production-ready, self-hosted LLM API** deployed on Google Cloud Run. It provides an OpenAI-compatible API endpoint for running inference on Qwen3-8B-AWQ, a state-of-the-art 8-billion parameter language model with advanced reasoning capabilities.
 
 ### In One Sentence
-> Deploy your own cheap (~$0.005/1K tokens), fast (~80ms latency), production-grade LLM API that's 15x cheaper than OpenAI with comparable or better performance.
+> Deploy your own production-grade LLM API: ~$0.005/1K tokens, ~80ms latency, scale-to-zero ($0/month idle).
 
 ## Who Is This For?
 
@@ -276,8 +276,7 @@ OpenAI gpt-4o-mini:
 Self-hosted (L4 GPU):
   $0.90/hour when active
   100 hours/month = $90/month
-
-Self-hosted is 83x cheaper at 100k tokens/month!
+  Scale-to-zero: $0 when idle
 ```
 
 ## Deployment Options
@@ -316,8 +315,8 @@ gcloud run services update llm-api --min-instances 1
 
 ### 2. Production Applications
 - Embed LLM in your SaaS product
-- Better margins (self-hosted cheaper than OpenAI)
 - Full data privacy and control
+- Cost-predictable infrastructure
 
 ### 3. Research & Benchmarking
 - Compare vLLM performance vs other inference engines
@@ -388,7 +387,7 @@ This repository provides everything needed to run a **production-grade, cost-opt
 - ✅ **Complete implementation** with proven stability
 - ✅ **Comprehensive documentation** for all users
 - ✅ **Easy deployment** (single command)
-- ✅ **Cost-effective** (15-100x cheaper than commercial APIs)
+- ✅ **Cost-controlled** (~$0.005/1K tokens, scale-to-zero pricing)
 - ✅ **OpenAI-compatible** (drop-in replacement)
 - ✅ **Production-ready** (error handling, logging, monitoring)
 
