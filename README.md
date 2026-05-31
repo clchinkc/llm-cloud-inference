@@ -1,3 +1,12 @@
+<p align="center">
+  <img src="https://img.shields.io/github/stars/clchinkc/llm-cloud-inference?style=flat-square&color=facc15" />
+  <img src="https://img.shields.io/github/last-commit/clchinkc/llm-cloud-inference?style=flat-square&color=3b82f6" />
+  <img src="https://img.shields.io/badge/vLLM-latest-059669?style=flat-square&logo=nvidia" />
+  <img src="https://img.shields.io/badge/Qwen3-8B-8b5cf6?style=flat-square" />
+  <img src="https://img.shields.io/badge/Google_Cloud_Run-serverless-4285f4?style=flat-square&logo=googlecloud" />
+  <img src="https://img.shields.io/badge/OpenAI--compatible-API-00a67e?style=flat-square" />
+</p>
+
 # LLM Cloud Inference
 
 OpenAI-compatible LLM API using vLLM to serve Qwen3-8B-AWQ (4-bit quantized) on Google Cloud Run with GPU support.
